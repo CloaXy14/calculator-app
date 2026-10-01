@@ -14,6 +14,12 @@ const expectDisplay = (value: string) => {
   expect(within(display).getByText(value, { exact: true })).toBeTruthy();
 };
 
+
+/** Text of each scientific LCD line (input, menu lines, result), with spaces collapsed. */
+const lcdLines = () => Array.from(screen.getByRole('status', { name: 'Calculator display' })
+  .querySelectorAll('.casio-line, .casio-lines > div'), line => (line.textContent ?? '').replace(/\s+/g, ' ').trim());
+const expectLine = (value: string) => expect(lcdLines()).toContain(value.replace(/\s+/g, ' '));
+
 describe('calculator interface', () => {
   it('switches between flat and physical views without losing calculations', () => {
     render(<App />);
@@ -35,41 +41,17 @@ describe('calculator interface', () => {
     expectDisplay('12');
   });
 
-  it('preserves a pending calculation when switching modes in either direction', () => {
+  // Changed: each mode is now a separate calculator; switching keeps each calculation.
+  it('keeps each mode\'s calculation when switching modes', () => {
     render(<App />);
     press('1', '2', 'Add', 'Scientific');
-    expectDisplay('12');
     expect(screen.getByRole('region', { name: 'Scientific calculator' })).toBeTruthy();
-    press('3', 'Standard', 'Equals');
+    expect(screen.getByRole('group', { name: 'Scientific functions' })).toBeTruthy();
+    press('4', 'Standard', '3', 'Equals');
     expectDisplay('15');
     expect(screen.queryByRole('group', { name: 'Scientific functions' })).toBeNull();
-  });
-
-  it('evaluates square roots and two-operand powers using scientific keys', () => {
-    render(<App />);
-    press('Scientific', '9', 'Square root');
-    expectDisplay('3');
-    press('All clear', '2', 'Raise to power', '3', 'Equals');
-    expectDisplay('8');
-  });
-
-  it('exposes the angle setting and evaluates sine in degrees', () => {
-    render(<App />);
-    press('Scientific', 'Angle mode RAD. Switch to degrees', '3', '0', 'Sine');
-    expectDisplay('0.5');
-    expect(screen.getByRole('button', { name: 'Angle mode DEG. Switch to radians' })).toBeTruthy();
-  });
-
-  it('shows domain errors and recovers through the visible clear controls', () => {
-    render(<App />);
-    press('Scientific', '9', 'Change sign', 'Square root');
-    expectDisplay('Error');
-    press('Clear entry', '4', 'Square root');
-    expectDisplay('2');
-    press('Divide', '0', 'Equals');
-    expectDisplay('Error');
-    press('All clear', '5', 'Add', '7', 'Equals');
-    expectDisplay('12');
+    press('Scientific', 'Equals');
+    expectLine('4');
   });
 
   it('deletes only the last entered digit and keeps clear entry distinct from all clear', () => {
@@ -128,11 +110,113 @@ describe('calculator interface', () => {
     expect(screen.getByRole('button', { name: 'Standard', pressed: true })).toBe(standard);
   });
 
+  // Changed: the input limit was 15 digits; the requirement is now 30.
   it('retains the full bounded input in its announced display', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.keyboard('12345678901234567890');
-    expectDisplay('123456789012345');
+    await user.keyboard('12345678901234567890123456789012345');
+    expectDisplay('123456789012345678901234567890');
     expect(screen.getByRole('status').getAttribute('aria-live')).toBe('polite');
+  });
+
+  it('evaluates a typed expression with precedence and shows input and result lines', () => {
+    render(<App />);
+    press('Scientific', '2', 'Add', '3', 'Multiply', '4', 'Equals');
+    expectLine('2+3×4');
+    expectLine('14');
+  });
+
+  it('uses SHIFT for printed second functions and releases it after one key', () => {
+    render(<App />);
+    press('Scientific', 'Shift');
+    expect(screen.getByRole('button', { name: 'Shift', pressed: true })).toBeTruthy();
+    expect(within(screen.getByTestId('lcd-indicators')).getByText('S')).toBeTruthy();
+    press('Sine', '0', 'Decimal point', '5', 'Equals');
+    expectLine('30');
+    expect(screen.getByRole('button', { name: 'Shift', pressed: false })).toBeTruthy();
+    press('5', 'Shift', 'Reciprocal', 'Equals');
+    expectLine('120');
+  });
+
+  it('opens the hyperbolic menu with hyp', () => {
+    render(<App />);
+    press('Scientific', 'Hyperbolic');
+    expectLine('1:sinh  2:cosh');
+    press('2', '0', 'Equals');
+    expectLine('1');
+  });
+
+  it('stores a value with STO and shows the memory indicator for M+', () => {
+    render(<App />);
+    press('Scientific', '4', 'Memory add');
+    const indicators = screen.getByTestId('lcd-indicators');
+    expect(within(indicators).getByText('M')).toBeTruthy();
+    press('8', 'Shift', 'Recall', 'Negative');
+    expectLine('8→A');
+    press('Alpha', 'Negative', 'Multiply', 'Alpha', 'Memory add', 'Equals');
+    expectLine('32');
+  });
+
+  it('shows Math ERROR and returns to the expression with the cursor keys', () => {
+    render(<App />);
+    press('Scientific', '1', 'Divide', '0', 'Equals');
+    expectLine('Math ERROR');
+    press('Left');
+    expectLine('1÷0');
+    expect(screen.getByRole('status', { name: 'Calculator display' }).querySelector('.lcd-cursor')).toBeTruthy();
+  });
+
+  it('switches the angle unit through SETUP', () => {
+    render(<App />);
+    press('Scientific', 'Shift', 'Mode');
+    expectLine('4:Rad  5:Gra');
+    press('4');
+    expect(within(screen.getByTestId('lcd-indicators')).getByText('R')).toBeTruthy();
+  });
+
+  it('turns off with SHIFT AC and back on with ON', () => {
+    render(<App />);
+    press('Scientific', 'Shift', 'All clear');
+    expect(screen.getByRole('status', { name: 'Calculator display' }).textContent).toBe('Off');
+    press('On', '2', 'Add', '2', 'Equals');
+    expectLine('4');
+  });
+
+  it('types into the scientific calculator from the keyboard', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    press('Scientific');
+    await user.keyboard('2*(3+4){Enter}');
+    expectLine('14');
+    await user.keyboard('5!{Enter}');
+    expectLine('120');
+    await user.keyboard('{ArrowUp}');
+    expectLine('14');
+  });
+
+  it('visually presses scientific keys while typing on the keyboard and releases them afterward', async () => {
+    render(<App />);
+    press('Scientific');
+    const seven = screen.getByRole('button', { name: '7' });
+    const plus = screen.getByRole('button', { name: 'Add' });
+    const open = screen.getByRole('button', { name: 'Open parenthesis' });
+    fireEvent.keyDown(window, { key: '7' });
+    expect(seven.getAttribute('data-pressed')).toBe('true');
+    expect(plus.getAttribute('data-pressed')).toBe('false');
+    fireEvent.keyUp(window, { key: '7' });
+    await waitFor(() => expect(seven.getAttribute('data-pressed')).toBe('false'));
+    fireEvent.keyDown(window, { key: '+' });
+    expect(plus.getAttribute('data-pressed')).toBe('true');
+    fireEvent.keyDown(window, { key: '%' });
+    expect(open.getAttribute('data-pressed')).toBe('true');
+    expect(plus.getAttribute('data-pressed')).toBe('false');
+    fireEvent.keyUp(window, { key: '+' });
+    fireEvent.keyUp(window, { key: 'q' });
+    expect(open.getAttribute('data-pressed')).toBe('true');
+    fireEvent.keyUp(window, { key: '%' });
+    await waitFor(() => expect(open.getAttribute('data-pressed')).toBe('false'));
+    fireEvent.keyDown(window, { key: 'ArrowUp' });
+    expect(screen.getByRole('button', { name: 'Up' }).getAttribute('data-pressed')).toBe('true');
+    expectLine('7+%');
   });
 });

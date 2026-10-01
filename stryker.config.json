@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "mutate": [
+    "src/utils/**/*.ts",
+    "src/hooks/**/*.ts",
+    "src/casio/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/casio/useCasio.ts"
+  ],
+  "reporters": [
+    "clear-text",
+    "json"
+  ],
+  "jsonReporter": {
+    "fileName": "reports/mutation/mutation.json"
+  },
+  "coverageAnalysis": "perTest",
+  "concurrency": 6,
+  "timeoutMS": 20000,
+  "vitest": {
+    "configFile": "vitest.stryker.config.ts"
+  }
+}

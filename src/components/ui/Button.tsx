@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type ButtonVariant = 'default' | 'operator' | 'primary' | 'scientific' | 'clear';
+type ButtonVariant = 'default' | 'operator' | 'primary' | 'clear';
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   children: ReactNode;

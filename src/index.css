@@ -65,26 +65,16 @@ button { touch-action: manipulation; }
 .device-label { display: flex; justify-content: space-between; padding: 15px 2px 16px; font-size: 7px; letter-spacing: .14em; font-weight: 600; color: var(--muted); }
 .power-indicator { display: inline-flex; align-items: center; gap: 5px; }
 .power-indicator i { width: 4px; height: 4px; border-radius: 50%; background: var(--lcd-ink); box-shadow: 0 0 0 2px color-mix(in srgb, var(--lcd-ink) 10%, transparent); }
-.numeric-keypad, .scientific-keypad { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px 10px; }
-.scientific-keypad { padding-bottom: 17px; margin-bottom: 16px; border-bottom: 1px solid var(--case-dark); gap: 9px 10px; }
+.numeric-keypad { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px 10px; }
 .calc-key { display: flex; justify-content: center; align-items: center; position: relative; min-width: 0; height: 47px; padding: 0; border: 1px solid color-mix(in srgb, var(--case-dark) 65%, var(--case-light)); border-radius: 8px 8px 11px 11px; background: linear-gradient(var(--key-light), var(--key-dark)); color: var(--ink); font-size: 21px; font-weight: 500; box-shadow: inset 0 1px 0 var(--white), inset 1px 0 1px var(--white), 0 3px 0 var(--case-dark), 0 4px 0 color-mix(in srgb, var(--case-dark) 75%, var(--ink)), 0 5px 3px color-mix(in srgb, var(--shadow) 18%, transparent); transition: transform .08s, box-shadow .08s, filter .12s; }
 .calc-key > span { display: inline-flex; align-items: center; justify-content: center; }
 .calc-key--operator { background: linear-gradient(var(--case-light), color-mix(in srgb, var(--case-mid) 80%, var(--case-dark))); font-size: 22px; }
 .calc-key--clear { color: var(--accent-dark); background: linear-gradient(color-mix(in srgb, var(--accent-light) 20%, var(--white)), color-mix(in srgb, var(--accent-light) 24%, var(--case-mid))); font-size: 14px; font-weight: 650; }
 .calc-key--operator[aria-label="Clear entry"] { font-size: 14px; }
 .calc-key--primary { color: var(--white); background: linear-gradient(var(--accent-light), var(--accent)); border-color: var(--accent); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--white) 35%, transparent), 0 3px 0 var(--accent-dark), 0 4px 0 var(--accent-dark), 0 5px 3px color-mix(in srgb, var(--shadow) 20%, transparent); }
-.calc-key--scientific { height: 44px; border-radius: 7px 7px 9px 9px; font-size: 13px; font-weight: 400; color: var(--white); background: linear-gradient(color-mix(in srgb, var(--graphite) 88%, var(--case-light)), var(--graphite)); border-color: var(--graphite); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--white) 20%, transparent), 0 3px 0 var(--graphite-dark), 0 4px 2px color-mix(in srgb, var(--shadow) 20%, transparent); }
-.calc-key sup { font-size: .65em; transform: translateY(-4px); padding-left: 1px; }
-.angle-key { font-size: 10px; letter-spacing: .07em; }
-.key-indicator { width: 3px; height: 3px; border-radius: 50%; background: var(--accent-light); margin-left: 5px; }
-.math-variable { font-style: italic; }
 @media (hover: hover) { .calc-key:hover { filter: brightness(1.06); } }
 .calc-key:active { transform: translateY(3px); box-shadow: inset 0 1px 3px color-mix(in srgb, var(--shadow) 15%, transparent), 0 1px 0 var(--case-dark); }
 .calc-key[data-pressed="true"] { transform: translateY(3px); box-shadow: inset 0 1px 3px color-mix(in srgb, var(--shadow) 15%, transparent), 0 1px 0 var(--case-dark); }
-.constant-row { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
-.constant-row > span { color: var(--muted); font-size: 6px; letter-spacing: .065em; }
-.constant-row > span:last-child { margin-left: auto; font-size: 5.8px; }
-.constant-row button { background: var(--case-light); border: 1px solid var(--case-dark); box-shadow: 0 1px 0 var(--case-dark); width: 30px; height: 27px; border-radius: 15px; color: var(--ink); font-family: var(--font-serif); font-size: 15px; }
 .device-bottom { margin-top: 20px; display: flex; align-items: center; justify-content: space-between; padding: 0 3px; }
 .screw { border-radius: 50%; width: 5px; height: 5px; background: linear-gradient(140deg, var(--case-dark) 40%, var(--case-mid) 41% 60%, var(--case-dark) 61%); box-shadow: 0 1px 0 var(--white); opacity: .8; }
 .grip { display: flex; flex-direction: column; gap: 3px; width: 40px; }
@@ -94,9 +84,8 @@ button { touch-action: manipulation; }
 }
 @media (max-width: 359px) {
   .calculator { padding: 18px 15px 12px; }
-  .numeric-keypad, .scientific-keypad { column-gap: 8px; }
+  .numeric-keypad { column-gap: 8px; }
   .lcd { padding-right: 9px; padding-left: 9px; }
-  .constant-row > span:last-child { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -115,17 +104,95 @@ button { touch-action: manipulation; }
 [data-view="2d"] .calc-key { background: var(--white); box-shadow: none; }
 [data-view="2d"] .calc-key--operator { background: var(--case-mid); }
 [data-view="2d"] .calc-key--clear { background: var(--case-mid); }
-[data-view="2d"] .calc-key--scientific { background: var(--graphite); }
 [data-view="2d"] .calc-key--primary { background: var(--accent); }
 [data-view="2d"] .calc-key:active { transform: none; filter: brightness(.94); }
 [data-view="2d"] .calc-key[data-pressed="true"] { transform: none; filter: brightness(.88); }
 [data-view="2d"] .solar-panel, [data-view="2d"] .solar-panel i { background: var(--graphite); box-shadow: none; }
 [data-view="2d"] .mode-toggle, [data-view="2d"] .mode-toggle button,
-[data-view="2d"] .constant-row button, [data-view="2d"] .screw,
+[data-view="2d"] .screw,
 [data-view="2d"] .grip i, [data-view="2d"] .power-indicator i { box-shadow: none; }
 @media (max-width: 359px) {
   .device-stage { width: calc(100% - 24px); }
   .device-controls { gap: 5px; }
   .mode-toggle button { padding: 0 8px; font-size: 10px; }
   .view-toggle button { min-width: 28px; }
+}
+
+/* ---- Scientific mode: two-line LineIO calculator modelled on the fx-991ES PLUS ----
+   Same case, LCD, and key colours as the standard calculator; only the layout differs. */
+.lcd--casio { padding: 6px 10px 8px; min-height: 112px; display: flex; flex-direction: column; }
+.lcd--off { align-items: center; justify-content: center; color: transparent; }
+.casio-indicators { justify-content: flex-start; gap: 7px; min-height: 12px; }
+.casio-indicators .ind { font-style: normal; font-size: 8px; letter-spacing: .04em; }
+.casio-line { font-family: var(--font-mono); white-space: pre; overflow: hidden; }
+.casio-line--input { font-size: 15px; line-height: 22px; min-height: 22px; display: flex; align-items: center; }
+.casio-line--result { text-align: right; line-height: 1.3; min-height: 31px; display: flex; justify-content: flex-end; align-items: baseline; gap: 2px; font-variant-numeric: tabular-nums; }
+.result-label { margin-right: auto; }
+.result-exponent sup { font-size: .6em; vertical-align: .7em; }
+.casio-lines { font-family: var(--font-mono); font-size: 12px; line-height: 17px; white-space: pre; }
+.lcd-cursor { display: inline-block; width: 1.5px; height: 17px; margin: 0 -.75px; background: var(--lcd-ink); animation: lcd-blink 1s steps(1) infinite; }
+.lcd-cursor--overwrite { width: auto; height: auto; margin: 0; background: none; border-bottom: 2px solid var(--lcd-ink); }
+.scroll-mark { font-size: 8px; margin-right: 2px; }
+.scroll-mark--right { margin: 0 0 0 auto; }
+@keyframes lcd-blink { 50% { opacity: 0; } }
+
+.calculator--scientific .device-label { padding: 10px 2px 10px; }
+.casio-keypad { display: flex; flex-direction: column; gap: 6px; }
+.casio-top, .casio-functions, .casio-numbers { display: grid; gap: 1px 7px; }
+.casio-top { grid-template-columns: 1fr 1fr 1.45fr 1fr 1fr; }
+.casio-functions { grid-template-columns: repeat(6, minmax(0, 1fr)); padding-bottom: 12px; border-bottom: 1px solid var(--case-dark); }
+.casio-numbers { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px 9px; padding-top: 2px; }
+.casio-cell { display: flex; flex-direction: column; min-width: 0; }
+.casio-legend { display: flex; justify-content: space-between; align-items: flex-end; height: 12px; padding: 0 1px; font-size: 7.5px; line-height: 1; white-space: nowrap; overflow: hidden; }
+.casio-legend sup { font-size: .8em; line-height: 0; vertical-align: 3px; }
+.casio-legend sub { font-size: .8em; line-height: 0; }
+.legend-shift { color: var(--accent-dark); }
+.legend-alpha { color: #b3261e; margin-left: auto; }
+.legend--unavailable { opacity: .35; }
+
+/* Function keys: graphite, like the scientific keys of the standard design. */
+.casio-key { display: flex; justify-content: center; align-items: center; min-width: 0; height: 26px; padding: 0; border: 1px solid var(--graphite); border-radius: 7px 7px 9px 9px; color: var(--white); font-size: 11px; background: linear-gradient(color-mix(in srgb, var(--graphite) 88%, var(--case-light)), var(--graphite)); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--white) 20%, transparent), 0 3px 0 var(--graphite-dark), 0 4px 2px color-mix(in srgb, var(--shadow) 20%, transparent); transition: transform .08s, box-shadow .08s, filter .12s; }
+.casio-key > span { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
+.casio-key sup { font-size: .7em; line-height: 0; vertical-align: 4px; }
+.casio-key sub { font-size: .7em; line-height: 0; }
+.casio-key small { font-size: .7em; }
+/* Number, operator, clear and equals keys reuse the standard key faces. */
+.casio-key--num, .casio-key--operator, .casio-key--del, .casio-key--equals { height: 36px; border-radius: 8px 8px 11px 11px; font-size: 19px; font-weight: 500; color: var(--ink); border: 1px solid color-mix(in srgb, var(--case-dark) 65%, var(--case-light)); background: linear-gradient(var(--key-light), var(--key-dark)); box-shadow: inset 0 1px 0 var(--white), inset 1px 0 1px var(--white), 0 3px 0 var(--case-dark), 0 4px 0 color-mix(in srgb, var(--case-dark) 75%, var(--ink)), 0 5px 3px color-mix(in srgb, var(--shadow) 18%, transparent); }
+.casio-key--operator { font-size: 20px; background: linear-gradient(var(--case-light), color-mix(in srgb, var(--case-mid) 80%, var(--case-dark))); }
+.casio-key--del { font-size: 13px; font-weight: 650; color: var(--accent-dark); background: linear-gradient(color-mix(in srgb, var(--accent-light) 20%, var(--white)), color-mix(in srgb, var(--accent-light) 24%, var(--case-mid))); }
+.casio-key--equals { font-size: 21px; color: var(--white); background: linear-gradient(var(--accent-light), var(--accent)); border-color: var(--accent); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--white) 35%, transparent), 0 3px 0 var(--accent-dark), 0 4px 0 var(--accent-dark), 0 5px 3px color-mix(in srgb, var(--shadow) 20%, transparent); }
+.casio-key--shift { color: #e2bd52; font-size: 8.5px; letter-spacing: .05em; }
+.casio-key--alpha { color: #ff8a7a; font-size: 8.5px; letter-spacing: .05em; }
+.casio-key--on, .casio-cell .casio-key[aria-label="Mode"] { font-size: 8.5px; letter-spacing: .05em; }
+.casio-key:active, .casio-key[data-pressed="true"] { transform: translateY(3px); box-shadow: inset 0 1px 3px color-mix(in srgb, var(--shadow) 30%, transparent), 0 1px 0 var(--graphite-dark); }
+.casio-key--num:active, .casio-key--num[data-pressed="true"],
+.casio-key--operator:active, .casio-key--operator[data-pressed="true"],
+.casio-key--del:active, .casio-key--del[data-pressed="true"],
+.casio-key--equals:active, .casio-key--equals[data-pressed="true"] { transform: translateY(3px); box-shadow: inset 0 1px 3px color-mix(in srgb, var(--shadow) 15%, transparent), 0 1px 0 var(--case-dark); }
+.casio-key[aria-pressed="true"] { transform: translateY(3px); filter: brightness(1.2); box-shadow: inset 0 1px 3px color-mix(in srgb, var(--shadow) 30%, transparent); }
+@media (hover: hover) { .casio-key:hover, .replay-key:hover { filter: brightness(1.06); } }
+.frac-glyph { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; }
+.frac-glyph b { width: 9px; height: 1px; background: currentColor; }
+.key-box { display: inline-block; width: 5px; height: 6px; border: 1px solid currentColor; margin: 0 1px; vertical-align: middle; }
+.casio-key sub .key-box, .casio-key sup .key-box { width: 4px; height: 5px; }
+
+.replay-pad { grid-column: 3; grid-row: 1 / span 2; position: relative; margin: 2px 2px 0; border-radius: 50%; border: 1px solid var(--case-dark); background: radial-gradient(circle at 50% 35%, var(--key-light), var(--key-dark) 60%, var(--case-mid)); box-shadow: inset 0 1px 0 var(--white), 0 3px 0 var(--case-dark), 0 5px 4px color-mix(in srgb, var(--shadow) 18%, transparent); aspect-ratio: 1.15; align-self: center; }
+.replay-title { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 6.5px; letter-spacing: .1em; color: var(--muted); }
+.replay-key { position: absolute; display: flex; align-items: center; justify-content: center; width: 34%; height: 34%; border: 0; border-radius: 50%; background: transparent; color: var(--ink); font-size: 9px; transition: background .08s; }
+.replay-key:active, .replay-key[data-pressed="true"] { background: color-mix(in srgb, var(--shadow) 14%, transparent); }
+.replay-key--up { top: 0; left: 33%; }
+.replay-key--down { bottom: 0; left: 33%; }
+.replay-key--left { left: 0; top: 33%; }
+.replay-key--right { right: 0; top: 33%; }
+[data-view="2d"] .casio-key, [data-view="2d"] .replay-pad { box-shadow: none; }
+[data-view="2d"] .casio-key { background: var(--graphite); }
+[data-view="2d"] .casio-key--num, [data-view="2d"] .casio-key--del { background: var(--white); }
+[data-view="2d"] .casio-key--operator { background: var(--case-mid); }
+[data-view="2d"] .casio-key--equals { background: var(--accent); }
+[data-view="2d"] .replay-pad { background: var(--white); }
+[data-view="2d"] .casio-key:active, [data-view="2d"] .casio-key[data-pressed="true"] { transform: none; filter: brightness(.88); box-shadow: none; }
+@media (max-width: 359px) {
+  .casio-functions, .casio-top { column-gap: 4px; }
+  .casio-numbers { column-gap: 6px; }
+  .casio-legend { font-size: 6.5px; }
 }
